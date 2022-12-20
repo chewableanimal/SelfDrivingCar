@@ -86,5 +86,6 @@ function animate() {
   carCTX.restore();
 
   Visualizer.drawNetwork(networkCTX, bestCar.brain);
+  
   requestAnimationFrame(animate);
 }
