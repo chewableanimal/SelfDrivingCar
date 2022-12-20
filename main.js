@@ -38,6 +38,7 @@ const traffic = [
 
 animate();
 
+
 function save() {
   localStorage.setItem("bestBrain", JSON.stringify(bestCar.brain));
 }
