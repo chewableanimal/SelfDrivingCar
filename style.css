@@ -1,33 +1,102 @@
 body {
-    margin: 0;
-    background-color: gray;
-    
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  margin: 0;
+  background-color: gray;
+
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 #verticalButtons {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 button {
-    border: none;
-    border-radius: 5px;
-    padding: 5px 5px 7px 5px;
-    margin: 2px;
-    cursor: pointer;
+  border: none;
+  border-radius: 50px;
+  padding: 5px 5px 7px 5px;
+  margin: 2px;
+  cursor: pointer;
 }
 
 button:hover {
-    background-color: blue;
-    
+  background-color: blue;
 }
 #carCanvas {
-    background-color: lightgray;
+  background-color: lightgray;
 }
 #networkCanvas {
-    background-color: black;
+  background-color: black;
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  margin: 20px 0;
+  width: 100%;
+}
+input[type="range"]:focus {
+  outline: none;
+}
+input[type="range"]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 4px;
+  cursor: pointer;
+  animate: 0.2s;
+  background: rgb(255, 111, 97);
+  background: linear-gradient(
+    90deg,
+    rgba(255, 111, 97, 1) 35%,
+    rgba(102, 0, 255, 1) 100%
+  );
+  border-radius: 25px;
+}
+input[type="range"]::-webkit-slider-thumb {
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 4px 0 rgba(0, 0, 0, 1);
+  cursor: pointer;
+  -webkit-appearance: none;
+  margin-top: -8px;
+}
+input[type="range"]:focus::-webkit-slider-runnable-track {
+background: rgb(255,111,97);
+background: linear-gradient(90deg, rgba(255,111,97,1) 35%, rgba(102,0,255,1) 100%);}
+.range-wrap {
+  width: 500px;
+  position: relative;
+}
+.range-value {
+  position: absolute;
+  top: -50%;
+}
+.range-value span {
+  width: 30px;
+  height: 24px;
+  line-height: 24px;
+  text-align: center;
+  background: #be2087;
+  color: #fff;
+  font-size: 12px;
+  display: block;
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, 0);
+  border-radius: 6px;
+}
+.range-value span:before {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-top: 10px solid #be2087;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  margin-top: -1px;
 }

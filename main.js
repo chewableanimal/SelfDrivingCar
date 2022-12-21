@@ -8,35 +8,55 @@ const carCTX = carCanvas.getContext("2d");
 const networkCTX = networkCanvas.getContext("2d");
 
 const road = new Road(carCanvas.width / 2, carCanvas.width * 0.9);
-const cars = generateCars(1000);
+const range = document.getElementById("myRange"),
+  rangeV = document.getElementById("rangeV"),
+  setValue = () => {
+    const newValue = Number(
+        ((range.value - range.min) * 100) / (range.max - range.min)
+      ),
+      newPosition = 10 - newValue * 0.2;
+    rangeV.innerHTML = `<span>${range.value}</span>`;
+    rangeV.style.left = `calc(${newValue}% + (${newPosition}px))`;
+
+  };
+range.value = localStorage.getItem("value") || 100;
+
+document.addEventListener("DOMContentLoaded", setValue);
+range.addEventListener("input", setValue);
+
+const cars = generateCars(document.getElementById("myRange").value);
 let bestCar = cars[0];
 if (localStorage.getItem("bestBrain")) {
   for (let i = 0; i < cars.length; i++) {
     cars[i].brain = JSON.parse(localStorage.getItem("bestBrain"));
-    if (i!=0) {
-      NeuralNetwork.mutate(cars[i].brain,0.2);
+    if (i != 0) {
+      NeuralNetwork.mutate(cars[i].brain, 0.2);
     }
   }
 }
 
 const traffic = [
-  new Car(road.getLaneCenter(1), -100, 30, 50, "DUMMY", 1.6),
-  new Car(road.getLaneCenter(0), -300, 30, 50, "DUMMY", 1.6),
-  new Car(road.getLaneCenter(2), -300, 30, 50, "DUMMY", 1.6),
-  new Car(road.getLaneCenter(1), -400, 30, 50, "DUMMY", 1.6),
-  new Car(road.getLaneCenter(0), -500, 30, 50, "DUMMY", 1.6),
-  new Car(road.getLaneCenter(1), -500, 30, 50, "DUMMY", 1.6),
-  new Car(road.getLaneCenter(2), -600, 30, 50, "DUMMY", 1.6),
-  new Car(road.getLaneCenter(1), -700, 30, 50, "DUMMY", 1.6),
-  new Car(road.getLaneCenter(0), -200, 30, 50, "DUMMY", 1.6),
-  new Car(road.getLaneCenter(1), -800, 30, 50, "DUMMY", 1.6),
-  new Car(road.getLaneCenter(2), -800, 30, 50, "DUMMY", 1.6),
-  new Car(road.getLaneCenter(0), -900, 30, 50, "DUMMY", 1.6),
-  new Car(road.getLaneCenter(1), -1000, 30, 50, "DUMMY", 1.6),
-  new Car(road.getLaneCenter(2), -1000, 30, 50, "DUMMY", 1.6),
+  new Car(road.getLaneCenter(1), -100, 30, 50, "DUMMY", 1.2),
+  new Car(road.getLaneCenter(0), -300, 30, 50, "DUMMY", 1.2),
+  new Car(road.getLaneCenter(2), -300, 30, 50, "DUMMY", 1.2),
+  new Car(road.getLaneCenter(1), -400, 30, 50, "DUMMY", 1.2),
+  new Car(road.getLaneCenter(0), -500, 30, 50, "DUMMY", 1.2),
+  new Car(road.getLaneCenter(1), -500, 30, 50, "DUMMY", 1.2),
+  new Car(road.getLaneCenter(2), -600, 30, 50, "DUMMY", 1.2),
+  new Car(road.getLaneCenter(1), -700, 30, 50, "DUMMY", 1.2),
+  new Car(road.getLaneCenter(0), -200, 30, 50, "DUMMY", 1.2),
+  // new Car(road.getLaneCenter(1), -800, 30, 50, "DUMMY", 1.6),
+  // new Car(road.getLaneCenter(2), -800, 30, 50, "DUMMY", 1.6),
+  // new Car(road.getLaneCenter(0), -900, 30, 50, "DUMMY", 1.6),
+  // new Car(road.getLaneCenter(1), -1000, 30, 50, "DUMMY", 1.6),
+  // new Car(road.getLaneCenter(2), -1000, 30, 50, "DUMMY", 1.6),
 ];
 
 animate();
+
+function retry() {
+  window.location.reload();
+}
 
 function save() {
   localStorage.setItem("bestBrain", JSON.stringify(bestCar.brain));
@@ -44,6 +64,11 @@ function save() {
 
 function discard() {
   localStorage.removeItem("bestBrain");
+}
+
+function getNewValue() {
+  localStorage.setItem("value", document.getElementById("myRange").value);
+  window.location.reload();
 }
 
 function generateCars(N) {
@@ -87,6 +112,5 @@ function animate() {
 
   Visualizer.drawNetwork(networkCTX, bestCar.brain);
 
-  
   requestAnimationFrame(animate);
 }
