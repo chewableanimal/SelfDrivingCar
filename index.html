@@ -11,19 +11,20 @@
     <canvas id="carCanvas"></canvas>
     <canvas id="networkCanvas"></canvas>
     <div id="verticalButtons">
-      <button onclick="save()">Save</button>
-      <button onclick="discard()">Discard</button>
-      <button onclick="retry()">Retry</button>
+      <button onclick="togglePlay()">Play/Pause</button>
+      <button onclick="save()">Save Best Car</button>
+      <button onclick="discard()">Discard Best Car</button>
+      <button onclick="retry()">Restart</button>
       <div class="range-wrap">
         <div class="range-value" id="rangeV"></div>
         <input
           type="range"
           min="10"
-          max="710"
+          max="700"
           class="slider"
           id="myRange"
           step="5"
-          onchange="getNewValue()"
+          onchange="getNewCarsValue()"
         />
       </div>
         Test Cars
