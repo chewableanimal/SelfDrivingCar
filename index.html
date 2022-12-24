@@ -11,10 +11,10 @@
     <canvas id="carCanvas"></canvas>
     <canvas id="networkCanvas"></canvas>
     <div id="verticalButtons">
-      <button onclick="togglePlay()">Play/Pause</button>
-      <button onclick="save()">Save Best Car</button>
-      <button onclick="discard()">Discard Best Car</button>
-      <button onclick="retry()">Restart</button>
+      <button class="pause-play-button" onclick="togglePlay()"></button>
+      <button class="buttons" onclick="save()">Save Best Car</button>
+      <button class="buttons" onclick="discard()">Discard Best Car</button>
+      <button class="buttons" onclick="retry()">Restart</button>
       <div class="range-wrap">
         <div class="range-value" id="rangeV"></div>
         <input
@@ -27,8 +27,7 @@
           onchange="getNewCarsValue()"
         />
       </div>
-        Test Cars
-
+      Test Cars
     </div>
     <script src="visualizer.js"></script>
 
