@@ -56,12 +56,26 @@ const traffic = [
   new Car(road.getLaneCenter(1), -1000, 30, 50, "DUMMY", 1.6),
 ];
 
+displayPlayButton();
+
 // Animate function
 animate();
 
 // Functions
+function displayPlayButton() {
+  const pausePlayButton = document.querySelector(".pause-play-button");
+  if (play) {
+    pausePlayButton.innerHTML = "Pause";
+    pausePlayButton.style.backgroundColor = "#be2087";
+  } else {
+    pausePlayButton.innerHTML = "Play";
+    pausePlayButton.style.backgroundColor = "#ff6f61";
+  }
+}
 function togglePlay() {
   play = !play;
+  displayPlayButton();
+
   localStorage.setItem("play", JSON.stringify(play));
   if (play) {
     animate();
