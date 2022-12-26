@@ -27,6 +27,26 @@ range.value = JSON.parse(localStorage.getItem("carsValue")) || 100;
 // document.addEventListener("DOMContentLoaded", setValue);
 range.addEventListener("input", setValue);
 
+const trafficRange = document.getElementById("trafficRange");
+
+// Set range value, position and update
+const rangeVV = document.getElementById("rangeVV");
+const setTrafficValue = () => {
+  const newValue = Number(
+      ((trafficRange.value - trafficRange.min) * 100) /
+        (trafficRange.max - trafficRange.min)
+    ),
+    newPosition = 10 - newValue * 0.2;
+  rangeVV.innerHTML = `<span>${trafficRange.value}</span>`;
+  rangeVV.style.left = `calc(${newValue}% + (${newPosition}px))`;
+};
+range.value = JSON.parse(localStorage.getItem("carsValue")) || 100;
+trafficRange.value = JSON.parse(localStorage.getItem("trafficValue")) || 2;
+
+// document.addEventListener("DOMContentLoaded", setValue);
+range.addEventListener("input", setValue);
+trafficRange.addEventListener("input", setTrafficValue);
+
 // Generate cars
 const cars = generateCars(document.getElementById("myRange").value);
 let bestCar = cars[0];
@@ -40,21 +60,22 @@ if (localStorage.getItem("bestBrain")) {
 }
 
 // Create traffic
-const traffic = [
-  new Car(road.getLaneCenter(1), -100, 30, 50, "DUMMY", 1.2),
-  new Car(road.getLaneCenter(0), -300, 30, 50, "DUMMY", 1.2),
-  new Car(road.getLaneCenter(2), -300, 30, 50, "DUMMY", 1.2),
-  new Car(road.getLaneCenter(1), -400, 30, 50, "DUMMY", 1.2),
-  new Car(road.getLaneCenter(0), -500, 30, 50, "DUMMY", 1.2),
-  new Car(road.getLaneCenter(1), -500, 30, 50, "DUMMY", 1.2),
-  new Car(road.getLaneCenter(2), -600, 30, 50, "DUMMY", 1.2),
-  new Car(road.getLaneCenter(1), -700, 30, 50, "DUMMY", 1.2),
-  new Car(road.getLaneCenter(0), -200, 30, 50, "DUMMY", 1.2),
-  new Car(road.getLaneCenter(1), -800, 30, 50, "DUMMY", 1.6),
-  new Car(road.getLaneCenter(2), -800, 30, 50, "DUMMY", 1.6),
-  new Car(road.getLaneCenter(0), -900, 30, 50, "DUMMY", 1.6),
-  new Car(road.getLaneCenter(1), -1000, 30, 50, "DUMMY", 1.6),
-];
+let oldTraffic = JSON.parse(localStorage.getItem("trafficData"));
+
+if (oldTraffic) {
+  for (let i = 0; i < oldTraffic.length; i++) {
+    oldTraffic[i] = new Car(
+      oldTraffic[i].x,
+      oldTraffic[i].y,
+      30,
+      50,
+      "DUMMY",
+      1.2
+    );
+  }
+}
+
+let traffic = oldTraffic || generateTraffic(trafficRange.value, -50);
 
 displayPlayButton();
 
@@ -102,12 +123,51 @@ function getNewCarsValue() {
   window.location.reload();
 }
 
+function getNewTrafficValue() {
+  localStorage.setItem(
+    "trafficValue",
+    JSON.stringify(document.getElementById("trafficRange").value)
+  );
+  localStorage.removeItem("trafficData");
+  window.location.reload();
+}
+
 function generateCars(N) {
   const cars = [];
   for (let i = 1; i < N; i++) {
     cars.push(new Car(road.getLaneCenter(1), 100, 30, 50, "AI"));
   }
   return cars;
+}
+
+function generateTraffic(complex, position) {
+  let newTraffic = [];
+  let lastIndex = position;
+  const carAmounts = [4, 7, 10, 15, 25];
+  const carAmount = carAmounts[complex - 1];
+
+  for (let i = 0; i < carAmount; i++) {
+    const randomNum = getRandomIntInclusive(0, 2);
+    lastIndex -= randomNum * 75;
+    newTraffic.push(
+      new Car(
+        road.getLaneCenter(i === 3 ? 1 : randomNum),
+        lastIndex,
+        30,
+        50,
+        "DUMMY",
+        1.2
+      )
+    );
+  }
+
+  localStorage.setItem("trafficData", JSON.stringify(newTraffic));
+  return newTraffic;
+}
+
+function randomizeTraffic() {
+  localStorage.removeItem("trafficData");
+  window.location.reload();
 }
 
 function animate() {
