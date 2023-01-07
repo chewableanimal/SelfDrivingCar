@@ -3,7 +3,7 @@ class Sensor {
     this.car = car;
 
     this.rayCount = 5;
-    this.rayLength = 250;
+    this.rayLength = 300;
     this.raySpread = Math.PI / 3;
 
     this.rays = [];
