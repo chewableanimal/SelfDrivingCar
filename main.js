@@ -54,7 +54,7 @@ if (localStorage.getItem("bestBrain")) {
   for (let i = 0; i < cars.length; i++) {
     cars[i].brain = JSON.parse(localStorage.getItem("bestBrain"));
     if (i != 0) {
-      NeuralNetwork.mutate(cars[i].brain, 0.1);
+      NeuralNetwork.mutate(cars[i].brain, 0.15);
     }
   }
 }
@@ -144,22 +144,20 @@ function generateTraffic(complex, position) {
   let newTraffic = [];
   let lastPosition = position;
   const carAmounts = [4, 7, 10, 15, 30];
-  const lanePositions = [0, 1, 2];
   const carAmount = carAmounts[complex - 1];
 
   for (let i = 0; i < carAmount; i++) {
     const randomNum = getRandomIntInclusive(0, 2);
     lastPosition -= randomNum * carHeight * 2.25;
     let lanePosition = road.getLaneCenter(
-      i === 3 ? 1 : lanePositions[randomNum]
+      i === 3 ? 1 : randomNum
     );
     if (
       i >= 2 &&
       newTraffic[i - 2].y == lastPosition &&
       newTraffic[i - 1].y == lastPosition
     ) {
-      const randomNum = getRandomIntInclusive(1, 2);
-      lastPosition -= randomNum * carHeight * 2.25;
+      lastPosition -= carHeight * 2.25;
     }
     if (i >= 2 && newTraffic[i - 2].x == newTraffic[i - 1].x) {
       // Choose a different lane position to avoid having 3 cars in a row with the same x value
