@@ -7,7 +7,7 @@ let play = localStorage.getItem("play") === "true";
 
 // Set canvas widths
 carCanvas.width = 300;
-networkCanvas.width = 400;
+networkCanvas.width = 0.3 * window.innerWidth;
 
 // Create road and range
 const road = new Road(carCanvas.width / 2, carCanvas.width * 0.9);
@@ -24,7 +24,6 @@ const setValue = () => {
   rangeV.style.left = `calc(${newValue}% + (${newPosition}px))`;
 };
 range.value = JSON.parse(localStorage.getItem("carsValue")) || 100;
-// document.addEventListener("DOMContentLoaded", setValue);
 range.addEventListener("input", setValue);
 
 const trafficRange = document.getElementById("trafficRange");
@@ -43,18 +42,19 @@ const setTrafficValue = () => {
 range.value = JSON.parse(localStorage.getItem("carsValue")) || 100;
 trafficRange.value = JSON.parse(localStorage.getItem("trafficValue")) || 2;
 
-// document.addEventListener("DOMContentLoaded", setValue);
 range.addEventListener("input", setValue);
 trafficRange.addEventListener("input", setTrafficValue);
 
 // Generate cars
+const carWidth = 45;
+const carHeight = 75;
 const cars = generateCars(document.getElementById("myRange").value);
 let bestCar = cars[0];
 if (localStorage.getItem("bestBrain")) {
   for (let i = 0; i < cars.length; i++) {
     cars[i].brain = JSON.parse(localStorage.getItem("bestBrain"));
     if (i != 0) {
-      NeuralNetwork.mutate(cars[i].brain, 0.2);
+      NeuralNetwork.mutate(cars[i].brain, 0.1);
     }
   }
 }
@@ -67,15 +67,15 @@ if (oldTraffic) {
     oldTraffic[i] = new Car(
       oldTraffic[i].x,
       oldTraffic[i].y,
-      30,
-      50,
+      carWidth,
+      carHeight,
       "DUMMY",
       1.2
     );
   }
 }
 
-let traffic = oldTraffic || generateTraffic(trafficRange.value, -50);
+let traffic = oldTraffic || generateTraffic(trafficRange.value, -carHeight);
 
 displayPlayButton();
 
@@ -135,33 +135,56 @@ function getNewTrafficValue() {
 function generateCars(N) {
   const cars = [];
   for (let i = 1; i < N; i++) {
-    cars.push(new Car(road.getLaneCenter(1), 100, 30, 50, "AI"));
+    cars.push(new Car(road.getLaneCenter(1), 100, carWidth, carHeight, "AI"));
   }
   return cars;
 }
 
 function generateTraffic(complex, position) {
   let newTraffic = [];
-  let lastIndex = position;
-  const carAmounts = [4, 7, 10, 15, 25];
+  let lastPosition = position;
+  const carAmounts = [4, 7, 10, 15, 30];
+  const lanePositions = [0, 1, 2];
   const carAmount = carAmounts[complex - 1];
 
   for (let i = 0; i < carAmount; i++) {
     const randomNum = getRandomIntInclusive(0, 2);
-    lastIndex -= randomNum * 75;
+    lastPosition -= randomNum * carHeight * 2.25;
+    let lanePosition = road.getLaneCenter(
+      i === 3 ? 1 : lanePositions[randomNum]
+    );
+    if (
+      i >= 2 &&
+      newTraffic[i - 2].y == lastPosition &&
+      newTraffic[i - 1].y == lastPosition
+    ) {
+      const randomNum = getRandomIntInclusive(1, 2);
+      lastPosition -= randomNum * carHeight * 2.25;
+    }
+    if (i >= 2 && newTraffic[i - 2].x == newTraffic[i - 1].x) {
+      // Choose a different lane position to avoid having 3 cars in a row with the same x value
+      while (lanePosition == newTraffic[i - 1].x) {
+        const randomNum = getRandomIntInclusive(0, 2);
+        lanePosition = road.getLaneCenter(randomNum);
+      }
+    }
     newTraffic.push(
-      new Car(
-        road.getLaneCenter(i === 3 ? 1 : randomNum),
-        lastIndex,
-        30,
-        50,
-        "DUMMY",
-        1.2
-      )
+      new Car(lanePosition, lastPosition, carWidth, carHeight, "DUMMY", 1.2)
     );
   }
 
+  for (let i = 0; i < newTraffic.length; i++) {
+    if (
+      i >= 3 &&
+      newTraffic[i - 3].y == newTraffic[i - 2].y &&
+      newTraffic[i - 1].y == newTraffic[i].y
+    ) {
+      newTraffic.splice(i - 2, 1);
+    }
+  }
+
   localStorage.setItem("trafficData", JSON.stringify(newTraffic));
+  console.table(newTraffic);
   return newTraffic;
 }
 

@@ -46,7 +46,11 @@ class Road {
   }
 
   getLaneCenter(laneIndex){
-    const laneWidth = this.width/this.laneCount;
+    const laneWidth = this.getLaneWidth();
     return this.left + laneWidth/2 + laneIndex*laneWidth;
+  }
+
+  getLaneWidth() {
+    return this.width/this.laneCount;
   }
 }
